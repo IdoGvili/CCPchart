@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!-- saved from url=(0027)http://www.devision.it/CCP/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <link rel="stylesheet" href="./devision.it_CCP__files/styles.css">
+    <link rel="stylesheet" href="./devision.it_CCP__files/css2">
+    <script language="JavaScript" type="text/javascript" src="./devision.it_CCP__files/jquery-3.7.0.min.js.הורדה"></script>
+    <script language="JavaScript" type="text/javascript" src="./devision.it_CCP__files/papaparse.min.js.הורדה"></script>
+
+
+    <script>
+         
+       
+        $(document).ready(function() {
+            var url = 'locations.txt'; // Locations list url TO BE CHANGED
+
+                $.get(url, function(data) {                
+                        results={},
+                        rows=data.split("\n");
+
+                        for (var i=0;i<rows.length;i++){
+                            $('.locations').append('<li><a>' + rows[i] + '</a></li>');                                                     
+                        }
+                        $('.locations li').each(function(){
+                            parts=$(this).text().split(" ");
+                            locations=$(this).text().split(",");
+                            loc=locations.slice(0,1);
+                            address=locations.slice(1);
+                            zip=parts.slice(-1)+'/';
+                            $(this).find('a').attr("href", zip + loc + ".html");
+                            $(this).find('a').html("<div>" + loc + "</div>" + "<span>"+address+"</span>").css('font-weight','600');
+                        });  
+                        return results;                   
+                });   
+        });
+    </script>
+
+  </head>
+  <body>
+    <h1>CCP Locations </h1>
+
+
+    <div class="wrapper">
+        <h2 id="campaign-type"><div class="ico"></div>Acquire</h2>
+        <ul class="locations">
+
+        <li><a href="http://www.devision.it/CCP/61107/Rockford%20(Alpine).html" style="font-weight: 600;"><div>Rockford (Alpine)</div><span> IL 	1663 North Alpine Rd, Rockford, IL 61107
+</span></a></li><li><a href="http://www.devision.it/CCP/55076/Inver%20Grove%20Heights.html" style="font-weight: 600;"><div>Inver Grove Heights</div><span> MN	9070 Buchanan Trl, Inver Grove Heights, MN 55076
+</span></a></li><li><a href="http://www.devision.it/CCP/61073/Roscoe.html" style="font-weight: 600;"><div>Roscoe</div><span> IL	11447 Second St, Roscoe, IL 61073
+</span></a></li><li><a href="http://www.devision.it/CCP/61115/Machensney%20Park.html" style="font-weight: 600;"><div>Machensney Park</div><span> IL	1003 W Lande Rd, Ste A, Machesney Park, IL 61115
+</span></a></li><li><a href="http://www.devision.it/CCP/55129/Woodbury.html" style="font-weight: 600;"><div>Woodbury</div><span> MN	1125 Woodbury Dr, Woodbury, MN 55129
+</span></a></li><li><a href="http://www.devision.it/CCP/60174/St%20Charles.html" style="font-weight: 600;"><div>St Charles</div><span> IL	3851 Main St, St. Charles, IL 60174
+</span></a></li><li><a href="http://www.devision.it/CCP/61111/Loves%20Park.html" style="font-weight: 600;"><div>Loves Park</div><span> IL 	5325 N 2nd St, Loves Park, IL 61111
+</span></a></li><li><a href="http://www.devision.it/CCP/61109/Rockford%20(Columbia).html" style="font-weight: 600;"><div>Rockford (Columbia)</div><span> IL 	5801 Columbia Pkwy, Rockford, IL 61109
+</span></a></li><li><a href="http://www.devision.it/CCP/33569/Riverview.html" style="font-weight: 600;"><div>Riverview</div><span> FL	11252 Boyette Rd, Riverview, FL 33569
+</span></a></li><li><a href="http://www.devision.it/CCP/60115/DeKalb%20(Glidden).html" style="font-weight: 600;"><div>DeKalb (Glidden)</div><span> IL	901 S Annie Glidden Rd, Dekalb, IL 60115
+</span></a></li><li><a href="http://www.devision.it/CCP/60115/Dekalb%20(Sycamore).html" style="font-weight: 600;"><div>Dekalb (Sycamore)</div><span> IL	2579 Sycamore Rd, Dekalb, IL 60115
+</span></a></li><li><a href="http://www.devision.it/CCP/60098/Woodstock.html" style="font-weight: 600;"><div>Woodstock</div><span> IL11613 Catalpa Ln, Woodstock, IL 60098</span></a></li></ul>
+    </div>
+
+
+  
+
+</body></html>

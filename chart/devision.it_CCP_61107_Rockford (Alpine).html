@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<!-- saved from url=(0057)http://www.devision.it/CCP/61107/Rockford%20(Alpine).html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <link rel="stylesheet" href="./devision.it_CCP_61107_Rockford (Alpine)_files/styles.css">
+    <link rel="stylesheet" href="./devision.it_CCP_61107_Rockford (Alpine)_files/css2">
+    <script language="JavaScript" type="text/javascript" src="./devision.it_CCP_61107_Rockford (Alpine)_files/jquery-3.7.0.min.js.הורדה"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+    <script type="text/javascript" src="./devision.it_CCP_61107_Rockford (Alpine)_files/jquery-ui.min.js.הורדה"></script>
+    <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+
+
+    <script>
+              
+        $(document).ready(function() {
+            $( ".details li a" ).click (function() {
+                $( ".pop-wrapper" ).addClass('modal-on');
+            });
+            $( ".overlay, .close" ).click (function() {
+                $( ".pop-wrapper" ).removeClass('modal-on');
+                $( ".pop" ).css('display', 'none');
+            });
+
+            $( ".pin-map a" ).click (function() {
+                $( ".pinmap" ).css('display', 'flex');
+            });
+            $( ".social-media a" ).click (function() {
+                $( ".s-m-pref" ).css('display', 'flex');
+                
+            });
+            $( ".heat-map a" ).click (function() {
+                $( ".heatmap" ).css('display', 'flex');               
+            });
+          
+            // segment reel controllers
+            function resizeEl() {  
+                if( $(".segment-reel" ).width() > $(".reel-container").width()){   
+                $( ".reel-container .left, .reel-container .right").addClass('show');
+                }else{
+                    $( ".reel-container .left, .reel-container .right").removeClass('show');
+                }
+                $( ".reel-container .left img" ).click (function() {
+                $( ".segment-reel" ).addClass('move');
+                leftPos = parseInt($( ".segment-reel" ).css('marginLeft'));
+                if(leftPos< 100){
+                $( ".segment-reel" ).css('marginLeft', leftPos + 180 +'px'); 
+                }    
+                    
+            });
+
+            $( ".reel-container .right img" ).click (function() {
+                $( ".segment-reel" ).addClass('move');
+                leftPos = parseInt($( ".segment-reel" ).css('marginLeft'));
+                if(leftPos> 0-$( ".segment-reel" ).width()/2){
+                 $( ".segment-reel" ).css('marginLeft', leftPos - 180 +'px');   
+                }      
+            });
+            }
+
+            function dragReel() {
+                var leftPos = $(".segment-reel").offset().left
+                $( ".segment-reel" ).draggable({ axis: "x", containment: [ -100, 0, 420, 0 ] });
+
+                $( ".segment-reel" ).hover (function() {
+                    $(this).removeClass('move');
+                });
+
+            }
+
+            dragInterval = setInterval(dragReel,100);
+
+
+           
+
+
+            // Add comma every three digits
+            var tot=$('.total').text();
+            $.fn.digits = function(){ 
+            return this.each(function(){ 
+                $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") ); 
+            })
+            }
+
+            var maxSize = 260;
+            var minSize = 150;
+
+            var topThreeValues =  [];
+            var biggest =0;
+            var smallest =0;
+
+
+
+            $( ".top-three li" ).each(function() {
+                
+                mySize = parseInt($(this).find(".num").text()*2/100);              
+                topThreeValues.push(mySize);
+            
+            });
+
+            biggest = Math.max.apply(Math,topThreeValues); 
+            smallest = Math.min.apply(Math,topThreeValues); 
+
+
+
+            $( ".top-three li" ).each(function() {
+
+                  mySize = parseInt($(this).find(".num").text()*2/100);
+
+                //check if max limit is reached
+                if(biggest >= maxSize && smallest > minSize){ 
+                    if(mySize==biggest){                                                       
+                        var size = maxSize;                       
+                    }
+                    if(mySize < biggest && mySize > maxSize){
+                        var size = maxSize-(biggest-mySize)*20/100;
+                    }
+                    if(mySize < biggest && mySize < maxSize){
+                        var size = mySize;
+                    }
+          
+                }else{
+                    var size = mySize;
+                }
+
+
+                // set percentage value
+                var perc=tot-$( this ).find('.num').text();         
+                var perc=perc/tot*100;              
+                var perc=100-perc;
+                var stop=100;
+                var strokeDash = perc + " 100";
+                $( this ).find(".percentage").text(perc.toFixed(2)+'%');
+
+                //load segment images
+                var image="../images/" + $( this ).find(".segment-name").text() +".png";
+                $( this ).find("img").attr('src', image);
+
+                //set segment pdf file url 
+                var target='_blank';
+                var pdf='pdf/' + $( this ).find(".segment-name").text() +'.pdf';
+                $(this).find('a').attr("href", pdf);
+                $(this).find('a').attr("target", target);
+
+                // set size of top three segment based on their counts
+                $( this ).css({'width':size, 'height':size, 'marginTop':0});            
+                $( this ).find(".segment").css({'width':size, 'height':size});
+                $( this ).find(".circular-chart").css({'width':size+size/5, 'height':size+size/5, 'left':0-size/10,'top':0-size/10});
+
+                // assign stop value to ring chart
+                $( this ).find(".circle").css('strokeDasharray', strokeDash);
+
+                // Add comma every three digits
+                $( this ).find('.num').digits();
+      
+        });
+
+
+
+            
+
+            // Segment reel
+            $( ".segment-reel li" ).each(function() {
+                // set percentage value
+                var perc = tot-$( this ).find('.counts').text();        
+                var perc = perc/tot*100;
+                var perc=100-perc;
+                $( this ).find(".percentage").text(perc.toFixed(2)+'%');
+               
+
+                //load segment images
+                var image="../images/" + $( this ).find(".name").text() +".png";
+                $( this ).find("img").attr('src', image);
+
+                //set segment pdf file url 
+                var target='_blank';
+                var pdf='pdf/' + $( this ).find(".name").text() +'.pdf';
+                $(this).find('a').attr("href", pdf);
+                $(this).find('a').attr("target", target);
+
+               
+            });
+            $('.counts').digits();
+
+            // Page Title (location)
+            var pageName= (document.location.href.match(/[^\/]+$/)[0]);
+            var title=pageName.slice(0, -5);
+            title=title.replace(/%20/g, " ");
+            title=title.replace('#', "");
+            title=title.replace('.', "");
+            $('body h1').text(title);
+
+            resizeEl();
+            $(window).resize(resizeEl);
+        });
+
+
+    </script>
+  </head>
+  <body>
+    <h1>Rockford (Alpine)</h1>
+<canvas id="myChart" width="10" height="5"></canvas>
+    <!-- CAMPAIGN CONFIG -->
+    <div class="wrapper">
+        <h2 id="campaign-type"><div class="ico"></div>Acquire</h2>
+        <span class="campaign-description">Lower the Cost Per Acquisition to Convert Prospects to Members</span>
+        <div class="center-wrapper">
+            <!--<ul class="steps">
+                <li id="data-input" class="done"><div class="ico"></div>Data Input</li>
+                <li id="opportunity" class="on""><div class="ico"></div>Opportunity</li>
+                <li id="ad-content"><div class="ico"></div>AD-Content</li>
+            </ul>-->
+
+         <!-- side-menu -->
+            <div class="side-menu">
+                <h4 class="location">Rockford (Alpine)<br><span>
+                    IL 1663 North Alpine Rd, Rockford, IL 61107</span></h4>
+                <ul class="details">
+                    <li class="pin-map"><a href="http://www.devision.it/CCP/61107/Rockford%20(Alpine).html#">Prospect Pin Map</a></li>
+                    <li class="social-media"><a >Social Media Preferences</a></li>
+                    <li class="heat-map"><a href="http://www.devision.it/CCP/61107/Rockford%20(Alpine).html#">Primary Segment Heat Map</a></li>
+                </ul>  
+                <ul class="legend">
+                    <li><h4>Customer Category</h4></li>
+                    <li><div class="category primary"></div>Primary</li>
+                    <li><div class="category secondary"></div>Secondary</li>
+                    <li><div class="category tertiary"></div>Tertiary</li>
+                </ul> 
+            </div>
+            <div class="segments-wrapper">
+                <h3 class="total-opportunity">
+                    <span class="total counts">46,532</span><br>
+                    <span class="label">Top 3 Segments</span>
+                </h3>
+                <!--top 3 segments -->
+                <ul class="top-three">
+                    <li id="Expanding Horizons" style="width: 251px; height: 251px; margin-top: 0px;">
+                        <a href="http://www.devision.it/CCP/61107/pdf/Expanding%20Horizons.pdf" target="_blank">
+                            <svg viewBox="0 0 36 36" class="circular-chart" style="width: 301.2px; height: 301.2px; left: -25.1px; top: -25.1px;">
+                                <path class="circle" d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831" style="stroke-dasharray: 27.0695, 100;"></path>
+                            </svg><img src="./devision.it_CCP_61107_Rockford (Alpine)_files/Expanding Horizons.png">
+                            <div class="segment" style="width: 251px; height: 251px;">
+                                <h4 class="segment-name">Expanding Horizons</h4>
+                                <span class="num">12,596</span>
+                                <span class="percentage">27.07%</span>
+                            </div>
+                            <div class="category primary deg-255"></div>
+                        </a>
+                    </li>
+                    <li id="Balance and Harmony" style="width: 197px; height: 197px; margin-top: 0px;">
+                        <a href="http://www.devision.it/CCP/61107/pdf/Balance%20and%20Harmony.pdf" target="_blank">
+                            <svg viewBox="0 0 36 36" class="circular-chart" style="width: 236.4px; height: 236.4px; left: -19.7px; top: -19.7px;">
+                                <path class="circle" d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831" style="stroke-dasharray: 21.2306, 100;"></path>
+                            </svg><img src="./devision.it_CCP_61107_Rockford (Alpine)_files/Balance and Harmony.png">
+                            <div class="segment" style="width: 197px; height: 197px;">
+                                <h4 class="segment-name">Balance and Harmony</h4>
+                                <span class="num">9,879</span>
+                                <span class="percentage">21.23%</span>
+                            </div>
+                            <div class="category primary deg-255"></div>
+                        </a>
+                    </li>
+                    <li id="&gt;Striving Single Scene" style="width: 155px; height: 155px; margin-top: 0px;">
+                        <a href="http://www.devision.it/CCP/61107/pdf/Striving%20Single%20Scene.pdf" target="_blank">
+                            <svg viewBox="0 0 36 36" class="circular-chart" style="width: 186px; height: 186px; left: -15.5px; top: -15.5px;">
+                                <path class="circle" d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831" style="stroke-dasharray: 16.6831, 100;"></path>
+                            </svg><img src="./devision.it_CCP_61107_Rockford (Alpine)_files/Striving Single Scene.png">
+                            <div class="segment" style="width: 155px; height: 155px;">
+                                <h4 class="segment-name">Striving Single Scene</h4>
+                                <span class="num">7,763</span>
+                                <span class="percentage">16.68%</span>
+                            </div>
+                            <div class="category primary deg-255"></div>
+                        </a>
+                    </li>
+                        
+                </ul>
+
+                <!-- Segment Reel-->
+                <div class="reel-container">
+                    <div class="left show"><img src="./devision.it_CCP_61107_Rockford (Alpine)_files/arrow-left.svg"></div>
+                    <div class="right show"><img src="./devision.it_CCP_61107_Rockford (Alpine)_files/arrow-right.svg"></div>
+                    <div class="reel-wrapper">
+                            <ul class="segment-reel ui-draggable ui-draggable-handle">
+                                <li>
+                                    <a href="http://www.devision.it/CCP/61107/pdf/Progressive%20Potpourri.pdf" target="_blank">
+                                    <img src="./devision.it_CCP_61107_Rockford (Alpine)_files/Progressive Potpourri.png">
+                                        <div class="info">
+                                            <span class="name">Progressive Potpourri</span>
+                                            <div class="figures">
+                                                <span class="counts">3,278</span>
+                                                <span class="percentage">7.04%</span>
+                                            </div>
+                                        </div>
+                                        <div class="category secondary"></div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://www.devision.it/CCP/61107/pdf/Generational%20Soup.pdf" target="_blank">
+                                        <img src="./devision.it_CCP_61107_Rockford (Alpine)_files/Generational Soup.png">
+                                        <div class="info">
+                                            <span class="name">Generational Soup</span>
+                                            <div class="figures">
+                                                <span class="counts">2,934</span>
+                                                <span class="percentage">6.31%</span>
+                                            </div>
+                                        </div>
+                                        <div class="category secondary"></div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://www.devision.it/CCP/61107/pdf/Steadfast%20Conventionalists.pdf" target="_blank">
+                                        <img src="./devision.it_CCP_61107_Rockford (Alpine)_files/Steadfast Conventionalists.png">
+                                        <div class="info">
+                                            <span class="name">Steadfast Conventionalists</span>
+                                            <div class="figures">
+                                                <span class="counts">3,278</span>
+                                                <span class="percentage">7.04%</span>
+                                            </div>
+                                        </div>
+                                        <div class="category secondary"></div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://www.devision.it/CCP/61107/pdf/Fast%20Track%20Couples.pdf" target="_blank">
+                                        <img src="./devision.it_CCP_61107_Rockford (Alpine)_files/Fast Track Couples.png">
+                                        <div class="info">
+                                            <span class="name">Fast Track Couples</span>
+                                            <div class="figures">
+                                                <span class="counts">2,005</span>
+                                                <span class="percentage">4.31%</span>
+                                            </div>
+                                        </div>
+                                        <div class="category tertiary"></div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://www.devision.it/CCP/61107/pdf/Cul%20de%20Sac%20Diversity.pdf" target="_blank">
+                                        <img src="./devision.it_CCP_61107_Rockford (Alpine)_files/Cul de Sac Diversity.png">
+                                        <div class="info">
+                                            <span class="name">Cul de Sac Diversity</span>
+                                            <div class="figures">
+                                                <span class="counts">1,987</span>
+                                                <span class="percentage">4.27%</span>
+                                            </div>
+                                        </div>
+                                        <div class="category tertiary"></div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://www.devision.it/CCP/61107/pdf/Couples%20with%20Clout.pdf" target="_blank">
+                                        <img src="./devision.it_CCP_61107_Rockford (Alpine)_files/Couples with Clout.png">
+                                        <div class="info">
+                                            <span class="name">Couples with Clout</span>
+                                            <div class="figures">
+                                                <span class="counts">976</span>
+                                                <span class="percentage">2.10%</span>
+                                            </div>
+                                        </div>
+                                        <div class="category tertiary"></div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://www.devision.it/CCP/61107/pdf/Humble%20Beginnings.pdf" target="_blank">
+                                        <img src="./devision.it_CCP_61107_Rockford (Alpine)_files/Humble Beginnings.png">
+                                        <div class="info">
+                                            <span class="name">Humble Beginnings</span>
+                                            <div class="figures">
+                                                <span class="counts">824</span>
+                                                <span class="percentage">1.77%</span>
+                                            </div>
+                                        </div>
+                                        <div class="category tertiary"></div>
+                                    </a>
+                                </li>
+                            </ul>
+                    </div>
+                </div>
+                <!-- End Segment Reel-->
+               
+            </div>
+        </div>
+
+    </div>
+    <!-- END CAMPAIGN CONFIG -->
+<div class="pop-wrapper">
+    <div class="overlay"></div>
+
+     <!-- Pin Map-->
+    <div class="pop pinmap">
+        <h3>Top 10 Segments Pin Map</h3>
+        <img class="close" src="./devision.it_CCP_61107_Rockford (Alpine)_files/close.svg">
+        <iframe width="100%" height="400px" src="./devision.it_CCP_61107_Rockford (Alpine)_files/cli1wfdst006001rb2q6agbzb.html" title="Satellite Streets" style="border:none;"></iframe>
+    </div>
+
+    <!-- Social Media Preferencies-->
+    <div   class="pop s-m-pref">
+        <h3>Top 10 Social Media Channel Preferencies</h3>
+        <img class="close" src="./devision.it_CCP_61107_Rockford (Alpine)_files/close.svg">
+		<div class="outer">
+        
+				<canvas style=" background:transparent;" class="top"  id="socialMedia"></canvas>
+		
+		
+				<canvas style=" background:transparent;" class="below"  id="socialMedia2"></canvas>
+		
+		
+		</div>
+		
+    </div>
+
+    <!-- Heat Map-->
+    <div class="pop heatmap">
+        <h3>Primary Segment Heat Map</h3>
+        <img class="close" src="./devision.it_CCP_61107_Rockford (Alpine)_files/close.svg">
+        <iframe width="100%" height="400px" src="./devision.it_CCP_61107_Rockford (Alpine)_files/clikgjxq9000601q40v9qfkeh.html" title="Satellite Streets" style="border:none;"></iframe>
+    </div>      
+          
+          
+          <script>
+		
+		  new Chart(document.getElementById('socialMedia'), {
+
+  type: 'doughnut',
+  data: {
+       labels: ['Snapchat', 'YouTube', 'Linkedin', 'Any Social Media', 'Instagram', 'Twitter', 'Facebook','Pinterest'],
+                datasets: [{                
+                  data: [15, 14, 13, 13, 12, 12, 11, 10],
+                  backgroundColor: [
+                  'rgb(255, 252, 0)',
+                  'rgb(255, 0, 0)',
+                  'rgb(10, 102, 194)',
+                  'rgb(155, 155, 155)',
+                  'rgb(228, 64, 95)',
+                  'rgb(29, 161, 242)',
+                  'rgb(66, 103, 178)',
+                  'rgb(230, 0, 35)',
+                ],
+                 hoverOffset: 20,
+                 borderColor: '#f5f5f5',
+                 borderWidth: 1
+                }]
+	
+  },
+  options: {
+   cutout: '90%',
+    layout: {
+	padding:'40',
+	},
+	legend: {
+        display: false
+    },
+   
+    plugins: {
+      
+      labels: {
+        render: 'image',
+		
+	
+        
+		fontColor: '#000000', 
+		
+        images: [
+          {
+            src: 'devision.it_CCP_61107_Rockford (Alpine)_files/snapchatpng.png',
+            width: 40,
+            height: 40,
+			
+          }, 
+          {
+            src: 'devision.it_CCP_61107_Rockford (Alpine)_files/youtubepng.png',
+            width: 40,
+            height: 40,
+			
+          }, 
+          {
+            src: 'devision.it_CCP_61107_Rockford (Alpine)_files/Linkedin.png',
+            width: 40,
+            height: 40,
+			
+          },
+          {
+            src: 'devision.it_CCP_61107_Rockford (Alpine)_files/snapchatpng.png',
+            width: 40,
+            height: 40,
+			
+          },
+		   {
+            src: 'devision.it_CCP_61107_Rockford (Alpine)_files/Instagram.png',
+            width: 40,
+            height: 40,
+			
+          }, 
+		   {
+            src: 'devision.it_CCP_61107_Rockford (Alpine)_files/twitterpng.png',
+            width: 40,
+            height: 40,
+			
+          }, 
+		   {
+            src: 'devision.it_CCP_61107_Rockford (Alpine)_files/Facebook_icon.jpg',
+            width: 40,
+            height: 40,
+			
+          }, 
+		   {
+            src: 'devision.it_CCP_61107_Rockford (Alpine)_files/rest.png',
+            width: 40,
+            height: 40,
+			
+          }
+        ]
+      }
+    },
+    
+  }
+});
+new Chart(document.getElementById('socialMedia2'), {
+
+  type: 'doughnut',
+  data: {
+       labels: ['Snapchat', 'YouTube', 'Linkedin', 'Any Social Media', 'Instagram', 'Twitter', 'Facebook','Pinterest'],
+                datasets: [{                
+                  data: [15, 14, 13, 13, 12, 12, 11, 10],
+                  backgroundColor: [
+                  'rgb(255, 252, 0,0)',
+                  'rgb(255, 0, 0,0)',
+                  'rgb(10, 102, 194,0)',
+                  'rgb(155, 155, 155,0)',
+                  'rgb(228, 64, 95,0)',
+                  'rgb(29, 161, 242,0)',
+                  'rgb(66, 103, 178,0)',
+                  'rgb(230, 0, 35,0)',
+                ],
+                 hoverOffset: 20,
+                 borderColor: '#f5f5f5',
+                 borderWidth: 0
+                }]
+	
+  },
+  options: {
+   cutout: '90%',
+  legend: {
+        display: false
+    },
+   
+    plugins: {
+	
+      
+      labels: {
+        render: (args) =>{
+		return `${args.label}  ${args.percentage}%`
+		},
+		
+		position: 'outside',
+        fontWeight: 'bold',
+		fontSize: 16,
+		fontColor: '#000000', 
+		
+        images: [
+          {
+            src: 'Facebook_icon.jpg',
+            width: 40,
+            height: 40,
+			
+          }, 
+          {
+            src: 'youtubepng.png',
+            width: 40,
+            height: 40,
+			
+          }, 
+          {
+            src: 'twitterpng.png',
+            width: 40,
+            height: 40,
+			
+          },
+          {
+            src: 'snapchatpng.png',
+            width: 40,
+            height: 40,
+			
+          }
+        ]
+      }
+    },
+    
+  }
+});
+          </script>
+    </div>
+
+     
+  
+
+</body></html>
