@@ -1,0 +1,12 @@
+{
+  "name": "chart",
+  "version": "1.0.0",
+  "description": "",
+  "main": "chart/index.js",
+  "scripts": {
+    "start": "chart/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ido",
+  "license": "ISC"
+}
